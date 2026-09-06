@@ -1,9 +1,8 @@
 # AGENTS.md — Kindred_AI
 
 ## Current state
-- Greenfield: no code, build, test, or lint config yet. Only source of truth is `project_proposal_kindred_ai.md` — read it first.
-- No `README`, manifests, lockfiles, CI, or `opencode.json` as of 2026-09-06. Do not assume a stack (parent folder name suggests Java, but nothing in-repo confirms it).
-- When a stack/build is added, update this file with exact commands.
+- Stack: Python + Streamlit web MVP (`app.py` entrypoint, `kindred/` lib). Proposal doc is product source of truth.
+- Verify: `python test_kindred.py` (persona rules) · run: `python -m streamlit run app.py`
 
 ## Product constraints (from proposal — do not dilute)
 - Persona: warm, wise "auntie" confidante. Validate feelings first, every turn.
@@ -18,5 +17,6 @@
 - Minimal clutter, soft rounded bubbles, slow/gentle micro-interactions only.
 
 ## Workflow
-- Do not invent toolchain commands; if you introduce one (Maven/Gradle/npm/etc.), document the exact verify command here.
+- Setup: `pip install -r requirements.txt`. Memory encryption key auto-generates to `.kindred.key` (gitignored) or set `KINDRED_KEY`; logs in `data/` (gitignored).
+- Optional LLM: set `KINDRED_API_URL` + `KINDRED_API_KEY` (OpenAI-compatible `/chat/completions`); unset = warm local fallback. Never let LLM break venting-mode silence on advice.
 - Keep privacy/latency/persona impact in mind for any dependency or architecture choice.
