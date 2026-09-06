@@ -1,2 +1,5 @@
 streamlit>=1.57
 cryptography>=41
+# Speak-to-Vent voice (Thai-first, free, no API key):
+SpeechRecognition>=3.10  # mic audio -> text via Google Web Speech (th-TH)
+edge-tts>=1.0  # text -> warm Thai neural voice (th-TH-PremwadeeNeural)

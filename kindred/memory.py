@@ -18,6 +18,13 @@ _FEELING_WORDS = [
     "stress", "tired", "frustrat", "anxious", "overwhelm", "sad",
     "angry", "exhaust", "worried", "burnout", "lonely", "upset",
     "drain", "pressure", "deadline", "boss", "work", "family",
+    # Thai-first: common stress / feeling words
+    "เครียด", "เหนื่อย", "ท้อ", "กังวล", "เศร้า", "เหงา",
+    "โกรธ", "โมโห", "กดดัน", "หมดไฟ", "เบิร์นเอาต์", "นอนไม่หลับ",
+    "ร้องไห้", "น้ำตา", "หนักใจ", "ลำบากใจ", "เกรงใจ",
+    "งาน", "เจ้านาย", "หัวหน้า", "เพื่อนร่วมงาน", "ลูกค้า",
+    "ครอบครัว", "พ่อ", "แม่", "แฟน", "สามี", "ภรรยา", "ลูก",
+    "เงิน", "หนี้", "ค่ารถ", "รถติด", "สอบ", "เรียน", "เกรด",
 ]
 
 
@@ -75,12 +82,17 @@ class MemoryStore:
         self.data["exchanges"] = self.data["exchanges"][-50:]
         self.save()
 
-    def follow_up(self, session_start: float) -> str | None:
-        """Recall a stressor from a previous session, if any."""
+    def follow_up(self, session_start: float, lang: str = "th") -> str | None:
+        """Recall a stressor from a previous session, if any. Thai-first."""
         old = [s for s in self.data["stressors"] if s["ts"] < session_start]
         if not old:
             return None
         last = old[-1]["text"]
+        if lang == "th":
+            return (
+                f"ก่อนจะเริ่มคุยกันนะคนเก่ง — คราวก่อนหนูเล่าว่า \"{last}\" "
+                "วันนี้เรื่องนั้นเป็นยังไงบ้าง ยังค้างในใจอยู่ไหม?"
+            )
         return (
             f"Before we begin, sweetheart — last time you mentioned \"{last}\". "
             "How has that been sitting with you today?"
