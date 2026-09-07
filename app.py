@@ -2,7 +2,7 @@
 
 Premium popular-app design: Home ritual (greeting + mood check-in + breathe +
 daily quote), Chat (voice + text), Memories (encrypted timeline + gentle stats).
-Quiet Luxury theme, mobile-first, PC-friendly.
+Quiet Luxury theme. Responsive: wide multi-column on PC, stacked on mobile.
 """
 
 import datetime
@@ -33,11 +33,15 @@ CSS = """
 
 .stApp { background-color: #F9F6F0; color: #2C2A29; font-family: 'Inter', 'Noto Sans Thai', sans-serif; }
 h1, h2, h3 { font-family: 'Playfair Display', 'Noto Serif Thai', serif !important; color: #2C2A29; }
-.block-container { max-width: 860px !important; margin: 0 auto; padding: 1.2rem 1.5rem 7rem !important; }
+/* base = tablet; desktop widens below, mobile narrows below */
+.block-container { max-width: 880px !important; margin: 0 auto; padding: 1.2rem 1.5rem 7rem !important; }
 
 /* fade-in on load */
 @keyframes kindred-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .block-container > div { animation: kindred-fade .5s ease both; }
+
+/* breathing room between side-by-side panels on PC */
+[data-testid="stHorizontalBlock"] { gap: 1rem; }
 
 /* sticky app nav */
 .kindred-nav { position: sticky; top: 0; z-index: 50; background: #F9F6F0EE; backdrop-filter: blur(8px);
@@ -63,11 +67,6 @@ h1, h2, h3 { font-family: 'Playfair Display', 'Noto Serif Thai', serif !importan
 /* section titles */
 .kindred-section { font-family: 'Playfair Display','Noto Serif Thai',serif; font-size: 1.15rem; margin: 1.1rem 0 .5rem; }
 
-/* mood buttons: big, tappable, popular-app style */
-[data-testid="column"] .stButton > button { font-size: 1.5rem !important; line-height: 1.2 !important;
-  padding: .7rem .2rem !important; }
-.mood-label { text-align: center; font-size: .78rem; color: #4A4A4A; margin-top: -6px; }
-
 /* breathe */
 @keyframes kindred-breathe-circle { 0%,100% { transform: scale(.82); } 50% { transform: scale(1.08); } }
 .kindred-breathe-wrap { display: flex; align-items: center; gap: 1rem; }
@@ -86,7 +85,7 @@ h1, h2, h3 { font-family: 'Playfair Display', 'Noto Serif Thai', serif !importan
   padding: .6rem .95rem !important; margin-bottom: .6rem; max-width: 100%; }
 [data-testid="stChatMessageAvatarUser"] + div { background: #F6ECE7 !important; }
 
-/* touch targets */
+/* touch targets (mobile-first base) */
 .stButton > button { min-height: 48px !important; border-radius: 999px !important;
   font-size: 16px !important; border: 1px solid #CBAEAB !important;
   background: #fff !important; color: #2C2A29 !important; }
@@ -106,18 +105,42 @@ section[data-testid="stSidebar"] { background-color: #E8E5DF; }
 .kindred-memory { background: #fff; border: 1px solid #E8E5DF; border-radius: 16px;
   padding: .7rem .95rem; margin-bottom: .55rem; }
 .kindred-memory small { color: #8a8580; }
-.kindred-stat { text-align: center; }
-.kindred-stat b { font-size: 1.5rem; font-family: 'Playfair Display',serif; display: block; }
-.kindred-stat span { font-size: .8rem; color: #4A4A4A; }
+/* stats strip: pure flexbox so it stays 3-across on BOTH pc and mobile */
+.kindred-stats { display: flex; gap: .6rem; }
+.kindred-stats > div { flex: 1; background: #fff; border: 1px solid #E8E5DF; border-radius: 16px;
+  padding: .7rem .3rem; text-align: center; }
+.kindred-stats b { font-size: 1.5rem; font-family: 'Playfair Display',serif; display: block; }
+.kindred-stats span { font-size: .78rem; color: #4A4A4A; }
 
+/* ---------- desktop: wide canvas, side-by-side panels, denser controls ---------- */
+@media (min-width: 1024px) {
+  .block-container { max-width: 1180px !important; padding: 2rem 2.5rem 7rem !important; }
+  .kindred-hero { padding: 2.4rem 2rem 2rem; border-radius: 32px; }
+  .kindred-hero h1 { font-size: 2.6rem; }
+  .kindred-candle { font-size: 3rem; }
+  .kindred-section { font-size: 1.3rem; }
+  .stButton > button { min-height: 42px !important; font-size: 15px !important; }
+  [data-testid="stSegmentedControl"] button { min-height: 44px !important; font-size: 15px !important; }
+  [data-testid="stToggle"] { min-height: 40px; }
+  .stChatMessage { font-size: 15px; line-height: 1.7; }
+  /* keep the fixed chat composer aligned under the chat column, not edge-to-edge */
+  [data-testid="stChatInput"] { max-width: 720px !important; margin: 0 auto !important; }
+}
+
+/* ---------- mobile: single column, big touch targets ---------- */
 @media (max-width: 768px) {
-  .block-container { padding: .9rem .85rem 8rem !important; }
+  .block-container { max-width: 100% !important; padding: .9rem .85rem 8rem !important; }
   h1 { font-size: 1.7rem !important; }
   .kindred-hero { border-radius: 22px; padding: 1.2rem .95rem 1rem; }
   .kindred-candle { font-size: 2.1rem; }
   .kindred-breathe-circle { width: 76px; height: 76px; }
   .stChatMessage { font-size: 16px !important; line-height: 1.65 !important; }
   [data-testid="stAudioInput"] { width: 100% !important; }
+  /* stack Streamlit side-by-side panels vertically on phones */
+  [data-testid="stHorizontalBlock"] { flex-wrap: wrap !important; }
+  [data-testid="stHorizontalBlock"] > [data-testid="column"] { flex: 1 1 100% !important; min-width: 100% !important; }
+  .kindred-stats b { font-size: 1.25rem; }
+  .kindred-stats span { font-size: .72rem; }
 }
 """
 st.markdown(f"<style>{CSS}</style>", unsafe_allow_html=True)
@@ -138,6 +161,8 @@ STRINGS = {
         "mood_title": "เช็กอินหัวใจวันนี้",
         "mood_sub": "แตะตามความรู้สึกตอนนี้ได้เลย — ไม่มีผิดถูก",
         "moods": [("🌤️", "เบา ๆ"), ("🙂", "โอเค"), ("😐", "เฉย ๆ"), ("😔", "หนัก ๆ"), ("😭", "อยากร้อง")],
+        "mood_save": "💗 บันทึกความรู้สึก",
+        "mood_none": "แตะเลือกความรู้สึกก่อน แล้วกดบันทึกนะ",
         "mood_saved": "บันทึกแล้วนะ ป้าอยู่ตรงนี้กับหนูเสมอ",
         "breathe_title": "พักหายใจ 1 นาที",
         "breathe_sub": "หายใจเข้าทางจมูก 4 วินาที… กลั้นไว้ 4… แล้วผ่อนออกยาว ๆ ทางปาก",
@@ -151,6 +176,9 @@ STRINGS = {
             "วันนี้แค่ผ่านไปได้ก็เก่งมากแล้ว",
         ],
         "cta": "💬 เริ่มคุยกับป้า",
+        "side_title": "🕯️ มุมของป้า",
+        "side_tip": "ถ้ารู้สึกหนัก ลองกดอัดเสียงเล่าก่อนก็ได้ — ไม่ต้องเรียบเรียงให้สวย ป้าฟังรู้เรื่องเสมอ",
+        "recent_title": "🌿 เรื่องล่าสุดในใจ",
         "voice_title": "🎙️ พูดระบาย",
         "voice_hint": "กดอัดแล้วพูดได้เลย — ระบายออกมาเป็นเสียง ไม่ต้องพิมพ์",
         "transcribing": "กำลังฟังเสียงของหนู…",
@@ -183,6 +211,8 @@ STRINGS = {
         "mood_title": "Today's heart check-in",
         "mood_sub": "Tap what matches right now — no wrong answers.",
         "moods": [("🌤️", "Light"), ("🙂", "Okay"), ("😐", "Meh"), ("😔", "Heavy"), ("😭", "Tearful")],
+        "mood_save": "💗 Save check-in",
+        "mood_none": "Pick a feeling first, then hit save.",
         "mood_saved": "Saved, love. I'm right here with you.",
         "breathe_title": "One-minute breather",
         "breathe_sub": "In through the nose for 4… hold for 4… release slowly through the mouth.",
@@ -196,6 +226,9 @@ STRINGS = {
             "Getting through today is already brave.",
         ],
         "cta": "💬 Talk with Kindred",
+        "side_title": "🕯️ Pa's corner",
+        "side_tip": "If it feels heavy, try voice first — no need to phrase it perfectly. I always understand.",
+        "recent_title": "🌿 Recently on your heart",
         "voice_title": "🎙️ Speak to vent",
         "voice_hint": "Hit record and just talk — no need to type.",
         "transcribing": "Listening to your voice…",
@@ -243,7 +276,7 @@ def get_memory() -> MemoryStore:
 
 mem = get_memory()
 
-# ---------- top bar:lang (compact, mobile-friendly) ----------
+# ---------- top bar: brand + language ----------
 top_l, top_r = st.columns([3, 2])
 with top_l:
     st.markdown("**Kindred 🕯️**")
@@ -302,6 +335,16 @@ def _stats():
     return max(days, 1 if (ex or st_) else 0), len(ex), len(st_)
 
 
+def _stats_html(days: int, chats: int, themes: int) -> str:
+    return (
+        "<div class='kindred-stats'>"
+        f"<div><b>{days}</b><span>{T['days']}</span></div>"
+        f"<div><b>{chats}</b><span>{T['chats']}</span></div>"
+        f"<div><b>{themes}</b><span>{T['themes']}</span></div>"
+        "</div>"
+    )
+
+
 def _timeago(ts: float) -> str:
     mins = max(1, int((time.time() - ts) // 60))
     if lang == "th":
@@ -322,6 +365,19 @@ def _timeago(ts: float) -> str:
 def _daily_quote() -> str:
     doy = datetime.date.today().timetuple().tm_yday
     return T["quotes"][doy % len(T["quotes"])]
+
+
+def _save_mood(mood_text: str) -> None:
+    mem.add_exchange(f"Mood check-in: {mood_text}")
+    st.session_state.mood_today = mood_text
+    history = [
+        {"role": m["role"], "content": m["content"]}
+        for m in st.session_state.messages if m["role"] in ("user", "assistant")
+    ]
+    reply, _ = generate(mood_text, history, st.session_state.venting, lang=lang)
+    st.session_state.messages.append({"role": "user", "content": mood_text})
+    st.session_state.messages.append({"role": "assistant", "content": reply})
+    st.toast(T["mood_saved"])
 
 
 def _handle_voice_clip(voice_clip) -> None:
@@ -362,7 +418,7 @@ if not st.session_state.greeted:
         {"role": "assistant", "content": follow if follow else T["greeting"]}
     )
 
-# ============================================================ HOME
+# ============================================================ HOME (PC: 2 panels, mobile: stacked)
 if nav == "home":
     _days, _chats, _themes = _stats()
     st.markdown(
@@ -376,70 +432,104 @@ if nav == "home":
         unsafe_allow_html=True,
     )
 
-    with st.container(border=True):
-        st.markdown(f"<div class='kindred-section'>{T['mood_title']}</div>", unsafe_allow_html=True)
-        st.caption(T["mood_sub"])
-        cols = st.columns(5)
-        for i, (emoji, label) in enumerate(T["moods"]):
-            with cols[i]:
-                if st.button(emoji, key=f"mood_{i}", use_container_width=True):
-                    mood_text = f"{emoji} {label}"
-                    mem.add_exchange(f"Mood check-in: {mood_text}")
-                    st.session_state.mood_today = mood_text
-                    history = [
-                        {"role": m["role"], "content": m["content"]}
-                        for m in st.session_state.messages if m["role"] in ("user", "assistant")
-                    ]
-                    reply, _ = generate(mood_text, history, st.session_state.venting, lang=lang)
-                    st.session_state.messages.append({"role": "user", "content": mood_text})
-                    st.session_state.messages.append({"role": "assistant", "content": reply})
-                    st.toast(T["mood_saved"])
-                st.markdown(f"<div class='mood-label'>{label}</div>", unsafe_allow_html=True)
+    home_l, home_r = st.columns([3, 2], gap="large")
+    with home_l:
+        with st.container(border=True):
+            st.markdown(f"<div class='kindred-section'>{T['mood_title']}</div>", unsafe_allow_html=True)
+            st.caption(T["mood_sub"])
+            _mood_opts = [f"{e} {lab}" for e, lab in T["moods"]]
+            _mood_def = st.session_state.mood_today if st.session_state.mood_today in _mood_opts else None
+            if hasattr(st, "segmented_control"):
+                _sel = st.segmented_control(
+                    T["mood_title"], options=_mood_opts, default=_mood_def,
+                    label_visibility="collapsed", key="mood_seg",
+                )
+            else:
+                _sel = st.radio(
+                    T["mood_title"], options=_mood_opts,
+                    index=_mood_opts.index(_mood_def) if _mood_def else 0,
+                    horizontal=True, label_visibility="collapsed", key="mood_seg",
+                )
+            if st.button(T["mood_save"], type="primary", use_container_width=True):
+                if _sel:
+                    _save_mood(_sel)
+                    st.rerun()
+                else:
+                    st.warning(T["mood_none"])
 
-    with st.container(border=True):
-        st.markdown(f"<div class='kindred-section'>{T['breathe_title']}</div>", unsafe_allow_html=True)
-        st.caption(T["breathe_sub"])
-        st.markdown(
-            "<div class='kindred-breathe-wrap'><div class='kindred-breathe-circle'></div>"
-            f"<div><b>{T['breathe_in']}</b><br><small>4 · 4 · 6 — slow & gentle</small></div></div>",
-            unsafe_allow_html=True,
-        )
+        with st.container(border=True):
+            st.markdown(f"<div class='kindred-section'>{T['quote_title']}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='kindred-quote'>{_daily_quote()}</div>", unsafe_allow_html=True)
+            if st.button(T["cta"], use_container_width=True):
+                st.session_state.nav = "chat"
+                st.rerun()
 
-    with st.container(border=True):
-        st.markdown(f"<div class='kindred-section'>{T['quote_title']}</div>", unsafe_allow_html=True)
-        st.markdown(f"<div class='kindred-quote'>{_daily_quote()}</div>", unsafe_allow_html=True)
-        if st.button(T["cta"], type="primary", use_container_width=True):
-            st.session_state.nav = "chat"
-            st.rerun()
+    with home_r:
+        with st.container(border=True):
+            st.markdown(f"<div class='kindred-section'>{T['breathe_title']}</div>", unsafe_allow_html=True)
+            st.caption(T["breathe_sub"])
+            st.markdown(
+                "<div class='kindred-breathe-wrap'><div class='kindred-breathe-circle'></div>"
+                f"<div><b>{T['breathe_in']}</b><br><small>4 · 4 · 6 — slow & gentle</small></div></div>",
+                unsafe_allow_html=True,
+            )
+
+        with st.container(border=True):
+            st.markdown(_stats_html(_days, _chats, _themes), unsafe_allow_html=True)
 
     st.caption(T["privacy"])
 
-# ============================================================ CHAT
+# ============================================================ CHAT (PC: chat + side panel, mobile: stacked)
 elif nav == "chat":
-    with st.container(border=True):
-        st.markdown(f"**{T['space']}**")
-        vent = st.toggle(T["vent_label"], value=st.session_state.venting)
-        st.session_state.venting = vent
-        if vent:
-            st.info(T["vent_on_long"])
+    chat_l, chat_r = st.columns([3, 2], gap="large")
 
-    with st.container(border=True):
-        st.subheader(T["voice_title"])
-        st.caption(T["voice_hint"])
-        voice_clip = st.audio_input(T["voice_title"], label_visibility="collapsed")
-        if not stt_available():
-            st.caption("🎙️ " + voice_error("no-stt-dep", lang))
-        if not tts_available():
-            st.caption("🔊 " + voice_error("no-tts-dep", lang))
-    if voice_clip is not None:
-        _handle_voice_clip(voice_clip)
+    with chat_l:
+        with st.container(border=True):
+            st.subheader(T["voice_title"])
+            st.caption(T["voice_hint"])
+            voice_clip = st.audio_input(T["voice_title"], label_visibility="collapsed")
+            if not stt_available():
+                st.caption("🎙️ " + voice_error("no-stt-dep", lang))
+            if not tts_available():
+                st.caption("🔊 " + voice_error("no-tts-dep", lang))
+        if voice_clip is not None:
+            _handle_voice_clip(voice_clip)
 
-    for i, m in enumerate(st.session_state.messages):
-        with st.chat_message(m["role"]):
-            st.markdown(m["content"])
-            if m.get("audio"):
-                st.audio(m["audio"], format="audio/mp3",
-                         autoplay=(i == len(st.session_state.messages) - 1))
+        for i, m in enumerate(st.session_state.messages):
+            with st.chat_message(m["role"]):
+                st.markdown(m["content"])
+                if m.get("audio"):
+                    st.audio(m["audio"], format="audio/mp3",
+                             autoplay=(i == len(st.session_state.messages) - 1))
+
+    with chat_r:
+        with st.container(border=True):
+            st.markdown(f"**{T['space']}**")
+            vent = st.toggle(T["vent_label"], value=st.session_state.venting)
+            st.session_state.venting = vent
+            if vent:
+                st.info(T["vent_on_long"])
+
+        with st.container(border=True):
+            st.markdown(f"<div class='kindred-section'>{T['side_title']}</div>", unsafe_allow_html=True)
+            st.caption(T["side_tip"])
+            _recent = mem.data.get("stressors", [])[-1:]
+            if _recent:
+                st.markdown(f"<div class='kindred-section'>{T['recent_title']}</div>", unsafe_allow_html=True)
+                for s in reversed(_recent):
+                    st.markdown(
+                        f"<div class='kindred-memory'>🌿 {s['text']}<br><small>{_timeago(s['ts'])}</small></div>",
+                        unsafe_allow_html=True,
+                    )
+
+        with st.expander(T["settings"]):
+            vr = st.toggle(T["voice_reply_label"], value=st.session_state.voice_reply)
+            st.session_state.voice_reply = vr
+            if st.button(T["clear"], use_container_width=True):
+                st.session_state.messages = []
+                st.session_state.greeted = False
+                st.session_state.voice_done = set()
+                st.rerun()
 
     prompt = st.chat_input(T["input"])
     if prompt:
@@ -458,29 +548,18 @@ elif nav == "chat":
                 reply, _ = generate(prompt, history, st.session_state.venting, lang=lang)
             st.markdown(reply)
         st.session_state.messages.append({"role": "assistant", "content": reply})
+        st.rerun()
 
-    with st.expander(T["settings"]):
-        vr = st.toggle(T["voice_reply_label"], value=st.session_state.voice_reply)
-        st.session_state.voice_reply = vr
-        if st.button(T["clear"], use_container_width=True):
-            st.session_state.messages = []
-            st.session_state.greeted = False
-            st.session_state.voice_done = set()
-            st.rerun()
     st.caption(T["privacy"])
 
-# ============================================================ MEMORIES
+# ============================================================ MEMORIES (PC: 2-col timeline, mobile: stacked)
 else:
     _days, _chats, _themes = _stats()
     st.markdown(f"<div class='kindred-section'>{T['mem_title']}</div>", unsafe_allow_html=True)
     st.caption(f"{T['mem_sub']} · {T['mem_enc']}")
 
     with st.container(border=True):
-        c1, c2, c3 = st.columns(3)
-        for c, val, lab in ((c1, _days, T["days"]), (c2, _chats, T["chats"]), (c3, _themes, T["themes"])):
-            with c:
-                st.markdown(f"<div class='kindred-stat'><b>{val}</b><span>{lab}</span></div>",
-                            unsafe_allow_html=True)
+        st.markdown(_stats_html(_days, _chats, _themes), unsafe_allow_html=True)
 
     stressors = list(reversed(mem.data.get("stressors", [])))
     if not stressors:
@@ -490,11 +569,14 @@ else:
                 st.session_state.nav = "chat"
                 st.rerun()
     else:
-        for s in stressors[:15]:
-            st.markdown(
-                f"<div class='kindred-memory'>🌿 {s['text']}<br><small>{_timeago(s['ts'])}</small></div>",
-                unsafe_allow_html=True,
-            )
+        mem_l, mem_r = st.columns(2, gap="medium")
+        for col, items in ((mem_l, stressors[0::2]), (mem_r, stressors[1::2])):
+            with col:
+                for s in items[:8]:
+                    st.markdown(
+                        f"<div class='kindred-memory'>🌿 {s['text']}<br><small>{_timeago(s['ts'])}</small></div>",
+                        unsafe_allow_html=True,
+                    )
 
     with st.expander(T["settings"]):
         if st.button(T["clear"], use_container_width=True):
